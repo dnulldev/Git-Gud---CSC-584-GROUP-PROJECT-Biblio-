@@ -31,7 +31,7 @@ body {
   letter-spacing: 0.3px;
 }
 
-/* Soft Indigo Badge (Matches index.html & register.html) */
+/* Soft Indigo Badge (Matches index.html, login.html & register.html) */
 .badge-gold {
   background: #eef2ff;
   color: #4338ca;

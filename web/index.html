@@ -3,415 +3,379 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biblio-Space | Sign In</title>
+  <title>Biblio-Space | Library Room &amp; Lab Reservation</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
-    body {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
-      min-height: 100vh;
+    /* Landing Page Hero & Layout */
+    .landing-navbar {
+      background: #1e1b4b;
+      color: #ffffff;
+      padding: 1.1rem 2.5rem;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      overflow-x: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .split-wrapper {
-      width: 100%;
-      max-width: 1140px;
+    .landing-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-header-cta {
+      background: #ffffff;
+      color: #1e1b4b;
+      padding: 0.6rem 1.35rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-header-cta:hover {
+      background: #eef2ff;
+      transform: translateY(-1px);
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
+      color: #ffffff;
+      padding: 4.5rem 2rem;
+    }
+
+    .hero-inner {
+      max-width: 1120px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 3rem;
     }
 
-    .login-section {
-      flex: 1;
-      display: flex;
-      justify-content: center;
+    .hero-text {
+      flex: 1.2;
     }
 
-    .auth-card {
-      background: #ffffff;
-      width: 100%;
-      max-width: 420px;
-      border-radius: 14px;
-      padding: 2.25rem;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
-      position: relative;
-      z-index: 2;
-    }
-
-    .auth-header {
-      margin-bottom: 1.5rem;
-    }
-
-    .brand-tag {
-      font-size: 0.75rem;
+    .hero-pill {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.14);
+      color: #e0e7ff;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: #4338ca;
-      background: #eef2ff;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
-      display: inline-block;
-      margin-bottom: 0.6rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 1.1rem;
     }
 
-    .auth-header h1 {
-      color: #111827;
-      font-size: 1.55rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
+    .hero-text h1 {
+      font-size: 2.5rem;
+      line-height: 1.2;
+      font-weight: 800;
+      margin-bottom: 1.1rem;
     }
 
-    .auth-header p {
-      color: #6b7280;
-      font-size: 0.88rem;
+    .hero-text p {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.82);
+      margin-bottom: 2rem;
+      max-width: 540px;
     }
 
-    .role-tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #f3f4f6;
-      padding: 4px;
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-hero-primary {
+      background: #ffffff;
+      color: #1e1b4b;
+      padding: 0.85rem 1.75rem;
       border-radius: 8px;
-      margin-bottom: 1.25rem;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: 0.2s;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
 
-    .role-tab {
-      border: none;
-      background: transparent;
-      padding: 0.55rem;
-      font-size: 0.875rem;
+    .btn-hero-primary:hover {
+      background: #eef2ff;
+    }
+
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
       font-weight: 600;
-      color: #6b7280;
-      border-radius: 6px;
-      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
       transition: 0.2s;
     }
 
-    .role-tab.active {
-      background: #ffffff;
-      color: #111827;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
-    .btn-indigo {
-      background: #312e81;
-      color: #ffffff;
-      width: 100%;
-    }
-
-    .btn-indigo:hover {
-      background: #1e1b4b;
-    }
-
-    .switch-link {
-      margin-top: 1.25rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #6b7280;
-    }
-
-    .switch-link a {
-      color: #312e81;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .switch-link a:hover {
-      text-decoration: underline;
-    }
-
-    /* Right Side White Line-Shadow Library Animation */
-    .library-art-section {
-      flex: 1.1;
+    /* White Line-Art Architectural Floor Plan */
+    .hero-art {
+      flex: 0.95;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
       position: relative;
-      min-height: 440px;
-      user-select: none;
     }
 
-    .art-backdrop-ring {
-      position: absolute;
-      width: 360px;
-      height: 360px;
-      border-radius: 50%;
-      border: 1.5px dashed rgba(255, 255, 255, 0.16);
-      animation: spinSlow 45s linear infinite;
-    }
-
-    .art-backdrop-ring-inner {
-      position: absolute;
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 60px rgba(255, 255, 255, 0.08);
-    }
-
-    .library-svg {
+    .blueprint-svg {
       width: 100%;
       max-width: 420px;
       height: auto;
       filter: drop-shadow(0 12px 24px rgba(255, 255, 255, 0.14));
-      z-index: 1;
+      animation: floatBlueprint 6s ease-in-out infinite;
     }
 
-    .float-main { animation: floatBook 5s ease-in-out infinite; }
-    .float-slow-1 { animation: floatGentle 6s ease-in-out infinite; }
-    .float-slow-2 { animation: floatGentle 7s ease-in-out infinite reverse; }
-    .page-flip { animation: pageTurn 3.5s ease-in-out infinite; transform-origin: 220px 235px; }
-    .sparkle-1 { animation: pulseGlow 3s ease-in-out infinite; }
-    .sparkle-2 { animation: pulseGlow 4s ease-in-out infinite 1.2s; }
-
-    .art-caption {
-      margin-top: 1rem;
-      text-align: center;
-      z-index: 1;
+    .room-highlight-1 {
+      animation: pulseRoom 6s ease-in-out infinite;
     }
 
-    .art-caption h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 0.25rem;
+    .room-highlight-2 {
+      animation: pulseRoom 6s ease-in-out infinite 2s;
     }
 
-    .art-caption p {
-      font-size: 0.88rem;
-      color: rgba(255, 255, 255, 0.62);
+    .room-highlight-3 {
+      animation: pulseRoom 6s ease-in-out infinite 4s;
     }
 
-    @keyframes floatBook {
+    @keyframes floatBlueprint {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-12px); }
+      50% { transform: translateY(-8px); }
     }
 
-    @keyframes floatGentle {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(2deg); }
+    @keyframes pulseRoom {
+      0%, 100% { fill: rgba(255, 255, 255, 0.04); stroke: rgba(255, 255, 255, 0.55); }
+      30% { fill: rgba(255, 255, 255, 0.18); stroke: rgba(255, 255, 255, 0.95); }
+      60% { fill: rgba(255, 255, 255, 0.04); stroke: rgba(255, 255, 255, 0.55); }
     }
 
-    @keyframes pageTurn {
-      0%, 100% { transform: scaleX(1); opacity: 0.85; }
-      50% { transform: scaleX(0.35); opacity: 0.45; }
+    /* Info & Features Section */
+    .info-section {
+      max-width: 1120px;
+      margin: 3.5rem auto;
+      padding: 0 1.5rem;
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.2; transform: scale(0.9); }
-      50% { opacity: 0.85; transform: scale(1.15); }
+    .section-heading {
+      text-align: center;
+      margin-bottom: 2.5rem;
     }
 
-    @keyframes spinSlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    .section-heading h2 {
+      font-size: 1.75rem;
+      color: #1e1b4b;
+      margin-bottom: 0.5rem;
     }
 
-    @media (max-width: 900px) {
-      .split-wrapper { flex-direction: column; }
-      .library-art-section { min-height: 260px; }
+    .section-heading p {
+      color: #6b7280;
+      font-size: 0.98rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.75rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .feature-step {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4338ca;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      margin-bottom: 0.85rem;
+    }
+
+    .feature-card h3 {
+      color: #111827;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: #6b7280;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .landing-footer {
+      text-align: center;
+      padding: 1.75rem;
+      color: #6b7280;
+      font-size: 0.85rem;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 860px) {
+      .hero-inner { flex-direction: column; text-align: center; }
+      .hero-actions { justify-content: center; }
+      .hero-text h1 { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
 
-  <div class="split-wrapper">
-    <!-- Left-Center Login Card -->
-    <div class="login-section">
-      <div class="auth-card">
-        <div class="auth-header">
-          <span class="brand-tag">Biblio-Space</span>
-          <h1>Welcome back</h1>
-          <p>Sign in to manage library room reservations</p>
-        </div>
+  <!-- Top Navigation Header with Start Booking CTA -->
+  <header class="landing-navbar">
+    <div class="landing-brand">
+      <span>Biblio-Space</span>
+    </div>
+    <div>
+      <a href="login-page.html" class="btn-header-cta">Start Booking &rarr;</a>
+    </div>
+  </header>
 
-        <div id="loginAlert" class="alert"></div>
-
-        <div class="role-tabs">
-          <button type="button" id="tabUser" class="role-tab active" onclick="setRole('student')">
-            User (Student)
-          </button>
-          <button type="button" id="tabAdmin" class="role-tab" onclick="setRole('staff')">
-            Admin (Librarian)
-          </button>
-        </div>
-
-        <form id="loginForm">
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <label id="idLabel" for="loginId">Student ID</label>
-            <input type="text" id="loginId" placeholder="Enter your Student ID" required />
-          </div>
-
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required />
-          </div>
-
-          <button type="submit" class="btn btn-indigo">Sign In</button>
-        </form>
-
-        <div class="switch-link" id="registerPrompt">
-          New student? <a href="register-page.html">Create an account</a>
+  <!-- Hero Introduction Section -->
+  <section class="hero-section">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-pill">Library Space Management</span>
+        <h1>Reserve Study Rooms &amp; Presentation Labs Effortlessly.</h1>
+        <p>
+          Biblio-Space is a centralized library room reservation system designed for students and library administrators. Check real-time room availability, manage weekly study quotas, and book collaborative spaces in seconds.
+        </p>
+        <div class="hero-actions">
+          <a href="login-page.html" class="btn-hero-primary">Start Booking</a>
+          <a href="register-page.html" class="btn-hero-secondary">Create Student Account</a>
         </div>
       </div>
-    </div>
 
-    <!-- Right-Side White Line-Shadow Library Animation -->
-    <div class="library-art-section">
-      <div class="art-backdrop-ring"></div>
-      <div class="art-backdrop-ring-inner"></div>
-
-      <svg class="library-svg" viewBox="0 0 440 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="220" cy="312" rx="145" ry="12" fill="rgba(255,255,255,0.08)" />
-
-        <g stroke="rgba(255,255,255,0.22)" stroke-width="1.6" stroke-linecap="round">
-          <line x1="75" y1="295" x2="365" y2="295" />
-          <rect x="92" y="225" width="16" height="70" rx="2" />
-          <line x1="92" y1="238" x2="108" y2="238" />
-          <rect x="112" y="235" width="14" height="60" rx="2" />
-          <rect x="130" y="218" width="18" height="77" rx="2" transform="rotate(-6 130 295)" />
-          <rect x="302" y="230" width="16" height="65" rx="2" />
-          <rect x="322" y="220" width="18" height="75" rx="2" />
-          <line x1="322" y1="235" x2="340" y2="235" />
-          <line x1="322" y1="280" x2="340" y2="280" />
-        </g>
-
-        <g class="float-slow-1" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="78" y="82" width="54" height="38" rx="4" transform="rotate(-12 78 82)" />
-          <line x1="86" y1="90" x2="122" y2="82" />
-          <line x1="88" y1="100" x2="116" y2="94" />
-        </g>
-
-        <g class="float-slow-2" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M325 75 L355 88 L325 101 L295 88 Z" />
-          <path d="M306 94 V108 C306 113 344 113 344 108 V94" />
-          <line x1="355" y1="88" x2="355" y2="108" />
-        </g>
-
-        <g class="float-main">
-          <path d="M220 155 C190 142 145 142 118 154 V246 C145 234 190 234 220 248 Z"
-                fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.78)" stroke-width="2.2" stroke-linejoin="round" />
-          <path d="M220 155 C250 142 295 142 322 154 V246 C295 234 250 234 220 248 Z"
-                fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.78)" stroke-width="2.2" stroke-linejoin="round" />
-          <path class="page-flip" d="M220 155 C246 138 282 138 306 149 V240 C282 229 246 229 220 248 Z"
-                fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.55)" stroke-width="1.6" />
-          <g stroke="rgba(255,255,255,0.45)" stroke-width="1.6" stroke-linecap="round">
-            <path d="M138 172 Q172 166 202 174" />
-            <path d="M138 188 Q172 182 202 190" />
-            <path d="M138 204 Q172 198 202 206" />
-            <path d="M138 220 Q165 215 190 220" />
+      <!-- White Line-Art Architectural Library Floor Plan -->
+      <div class="hero-art">
+        <svg class="blueprint-svg" viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Blueprint Outer Grid & Corner Crosshairs -->
+          <g stroke="rgba(255,255,255,0.16)" stroke-width="1" stroke-dasharray="4 4">
+            <line x1="20" y1="40" x2="400" y2="40" />
+            <line x1="20" y1="280" x2="400" y2="280" />
+            <line x1="35" y1="25" x2="35" y2="295" />
+            <line x1="385" y1="25" x2="385" y2="295" />
           </g>
-          <g stroke="rgba(255,255,255,0.45)" stroke-width="1.6" stroke-linecap="round">
-            <path d="M238 174 Q268 166 302 172" />
-            <path d="M238 190 Q268 182 302 188" />
-            <path d="M238 206 Q268 198 302 204" />
-            <path d="M250 220 Q275 215 302 220" />
+
+          <!-- Outer Library Floor Perimeter -->
+          <rect x="35" y="40" width="350" height="240" rx="8"
+                stroke="rgba(255,255,255,0.75)" stroke-width="2.2" fill="rgba(255,255,255,0.03)" />
+
+          <!-- Room 1: Discussion Room A (Top Left) -->
+          <g class="room-highlight-1">
+            <rect x="48" y="54" width="145" height="96" rx="4" stroke-width="1.8" />
+            <!-- Conference Table & Chairs -->
+            <rect x="85" y="88" width="70" height="28" rx="4" stroke="rgba(255,255,255,0.65)" stroke-width="1.4" />
+            <line x1="95" y1="82" x2="112" y2="82" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+            <line x1="128" y1="82" x2="145" y2="82" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+            <line x1="95" y1="122" x2="112" y2="122" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+            <line x1="128" y1="122" x2="145" y2="122" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
           </g>
-          <path d="M112 252 C145 240 190 242 220 255 C250 242 295 240 328 252"
-                stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" />
-        </g>
+          <text x="58" y="71" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="600" letter-spacing="0.5">ROOM A &bull; 6 PAX</text>
 
-        <g class="sparkle-1" stroke="rgba(255,255,255,0.75)" stroke-width="1.8" stroke-linecap="round">
-          <line x1="220" y1="88" x2="220" y2="104" />
-          <line x1="212" y1="96" x2="228" y2="96" />
-        </g>
-        <g class="sparkle-2" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round">
-          <line x1="168" y1="112" x2="168" y2="122" />
-          <line x1="163" y1="117" x2="173" y2="117" />
-          <line x1="274" y1="114" x2="274" y2="124" />
-          <line x1="269" y1="119" x2="279" y2="119" />
-        </g>
-      </svg>
+          <!-- Room 2: Presentation Lab 1 (Top Right) -->
+          <g class="room-highlight-2">
+            <rect x="207" y="54" width="165" height="96" rx="4" stroke-width="1.8" />
+            <!-- Projector Screen & Workstation Desks -->
+            <line x1="255" y1="62" x2="325" y2="62" stroke="rgba(255,255,255,0.85)" stroke-width="2.4" stroke-linecap="round" />
+            <rect x="232" y="92" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+            <rect x="298" y="92" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+            <rect x="232" y="118" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+            <rect x="298" y="118" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+          </g>
+          <text x="217" y="71" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="600" letter-spacing="0.5">LAB 01</text>
 
-      <div class="art-caption">
-        <h2>Quiet Spaces. Smart Reservations.</h2>
-        <p>Book discussion rooms and presentation labs in seconds.</p>
+          <!-- Central Corridor Divider & Door Arcs -->
+          <g stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linecap="round">
+            <path d="M165 150 A16 16 0 0 0 181 166" />
+            <path d="M235 150 A16 16 0 0 1 219 166" />
+            <line x1="80" y1="168" x2="340" y2="168" stroke-dasharray="6 6" />
+          </g>
+
+          <!-- Room 3: Quiet Study Pods (Bottom Left) -->
+          <g class="room-highlight-3">
+            <rect x="48" y="186" width="185" height="80" rx="4" stroke-width="1.8" />
+            <!-- Individual Study Cubicles -->
+            <rect x="64" y="212" width="38" height="36" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" />
+            <rect x="121" y="212" width="38" height="36" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" />
+            <rect x="178" y="212" width="38" height="36" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" />
+          </g>
+          <text x="58" y="203" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="600" letter-spacing="0.5">STUDY PODS B1 &ndash; B3</text>
+
+          <!-- Bottom Right: Librarian Info Desk -->
+          <g stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round">
+            <rect x="247" y="186" width="125" height="80" rx="4" fill="rgba(255,255,255,0.02)" />
+            <path d="M275 215 H345 V235 H275 Z" />
+            <line x1="275" y1="248" x2="345" y2="248" />
+          </g>
+          <text x="257" y="203" fill="rgba(255,255,255,0.65)" font-size="10" font-weight="600" letter-spacing="0.5">ADMIN DESK</text>
+        </svg>
       </div>
     </div>
-  </div>
+  </section>
 
-  <script>
-    let currentRole = 'student';
+  <!-- System Overview & How It Works -->
+  <section class="info-section">
+    <div class="section-heading">
+      <h2>How Biblio-Space Works</h2>
+      <p>Simple, fair, and organized room scheduling for everyone in the library.</p>
+    </div>
 
-    // Seed sample bookings if empty
-    if (!localStorage.getItem('biblio_bookings')) {
-      const initialBookings = [
-        {
-          bookId: 'BK-1001',
-          studId: '20261001',
-          roomId: 'R01',
-          roomName: 'Discussion Room A (Level 2)',
-          bookDate: '2026-11-23',
-          startTime: '10:00',
-          endTime: '12:00',
-          hours: 2,
-          status: 'Confirmed'
-        },
-        {
-          bookId: 'BK-1002',
-          studId: '20261001',
-          roomId: 'R03',
-          roomName: 'Presentation Lab 1 (Level 3)',
-          bookDate: '2026-11-25',
-          startTime: '14:00',
-          endTime: '16:00',
-          hours: 2,
-          status: 'Confirmed'
-        }
-      ];
-      localStorage.setItem('biblio_bookings', JSON.stringify(initialBookings));
-    }
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-step">01 &bull; Register &amp; Sign In</span>
+        <h3>Student &amp; Librarian Access</h3>
+        <p>
+          New students can register with their Student ID and course details, while library administrators sign in directly to oversee room availability.
+        </p>
+      </div>
 
-    // Check if redirected from register.html with newly created ID
-    const urlParams = new URLSearchParams(window.location.search);
-    const registeredId = urlParams.get('registered');
-    if (registeredId) {
-      document.getElementById('loginId').value = registeredId;
-      const alertBox = document.getElementById('loginAlert');
-      alertBox.className = 'alert alert-success';
-      alertBox.textContent = 'Account created successfully! Please sign in.';
-      alertBox.style.display = 'block';
-    }
+      <div class="feature-card">
+        <span class="feature-step">02 &bull; Fair Usage Quota</span>
+        <h3>6-Hour Weekly Limit</h3>
+        <p>
+          Every student is allocated up to 6 booking hours per week across Discussion Rooms, Presentation Labs, and Study Pods to ensure fair access.
+        </p>
+      </div>
 
-    function setRole(role) {
-      currentRole = role;
-      document.getElementById('loginAlert').style.display = 'none';
-      document.getElementById('tabUser').classList.toggle('active', role === 'student');
-      document.getElementById('tabAdmin').classList.toggle('active', role === 'staff');
+      <div class="feature-card">
+        <span class="feature-step">03 &bull; Instant Management</span>
+        <h3>Book or Cancel Anytime</h3>
+        <p>
+          Select your preferred date, start time, and duration. Need to change plans? Cancel an upcoming booking anytime to immediately refund your quota hours.
+        </p>
+      </div>
+    </div>
+  </section>
 
-      if (role === 'student') {
-        document.getElementById('idLabel').textContent = 'Student ID';
-        document.getElementById('loginId').placeholder = 'Enter your Student ID';
-        document.getElementById('registerPrompt').style.display = 'block';
-      } else {
-        document.getElementById('idLabel').textContent = 'Librarian Staff ID';
-        document.getElementById('loginId').placeholder = 'Enter your Staff ID';
-        document.getElementById('registerPrompt').style.display = 'none';
-      }
-    }
+  <footer class="landing-footer">
+    &copy; 2026 Biblio-Space &mdash; Library Room &amp; Lab Reservation System
+  </footer>
 
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const userId = document.getElementById('loginId').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      if (!userId || !password) {
-        const alertBox = document.getElementById('loginAlert');
-        alertBox.className = 'alert alert-danger';
-        alertBox.textContent = 'Please enter your ID and password.';
-        alertBox.style.display = 'block';
-        return;
-      }
-
-      sessionStorage.setItem('biblio_user', JSON.stringify({ role: currentRole, userId }));
-      window.location.href = currentRole === 'student' ? 'student-book.html' : 'staff-schedule.html';
-    });
-  </script>
 </body>
 </html>

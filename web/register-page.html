@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biblio-Space | Student Registration</title>
+  <title>Biblio-Space | Registration</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     body {
@@ -42,8 +42,11 @@
       z-index: 2;
     }
 
-    .auth-header {
-      margin-bottom: 1.35rem;
+    .top-nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
     }
 
     .brand-tag {
@@ -55,8 +58,22 @@
       background: #eef2ff;
       padding: 0.25rem 0.65rem;
       border-radius: 6px;
-      display: inline-block;
-      margin-bottom: 0.6rem;
+    }
+
+    .back-home {
+      font-size: 0.82rem;
+      color: #6b7280;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-home:hover {
+      color: #312e81;
+      text-decoration: underline;
+    }
+
+    .auth-header {
+      margin-bottom: 1.35rem;
     }
 
     .auth-header h1 {
@@ -74,7 +91,7 @@
     .two-col-inputs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
     .btn-indigo {
@@ -205,7 +222,10 @@
     <div class="login-section">
       <div class="auth-card">
         <div class="auth-header">
-          <span class="brand-tag">Biblio-Space</span>
+          <div class="top-nav-row">
+            <span class="brand-tag">Biblio-Space</span>
+            <a href="index.html" class="back-home">&larr; Home</a>
+          </div>
           <h1>Create an account</h1>
           <p>Register as a student to reserve discussion rooms</p>
         </div>
@@ -250,7 +270,7 @@
         </form>
 
         <div class="switch-link">
-          Already have an account? <a href="index.html">Sign in</a>
+          Already have an account? <a href="login-page.html">Sign in</a>
         </div>
       </div>
     </div>
@@ -350,8 +370,8 @@
       students.push({ studId, name, phoneNum, email, course, password });
       localStorage.setItem('biblio_students', JSON.stringify(students));
 
-      // Redirect back to index.html with the new Student ID pre-filled
-      window.location.href = 'index.html?registered=' + encodeURIComponent(studId);
+      // Redirect to login.html with the new Student ID pre-filled
+      window.location.href = 'login.html?registered=' + encodeURIComponent(studId);
     });
   </script>
 </body>
