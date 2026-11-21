@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblio-Space | Book Discussion Room</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span>Biblio-Space</span>
+    </div>
+    <div class="nav-links">
+      <a href="student-book.html" class="active">Book a Room</a>
+      <a href="student-cancel.html">My Bookings &amp; Cancel</a>
+      <a href="index.html" class="btn-logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Weekly Quota Enforcement Tracker -->
+    <div class="quota-box">
+      <div class="quota-header">
+        <span>Weekly Booking Quota (Max 6 Hours / Week)</span>
+        <span id="quotaText">4 / 6 Hours Used</span>
+      </div>
+      <div class="progress-track">
+        <div id="quotaBar" class="progress-fill" style="width: 66.6%;"></div>
+      </div>
+      <small style="color: #6b7280; display: block; margin-top: 0.4rem;">
+        University Policy: Bookings exceeding 6 total hours in the current week will be automatically rejected.
+      </small>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Filter & Duration Selection -->
+    <div class="card">
+      <div class="card-title">
+        <span>1. Select Date, Time Slot &amp; Duration</span>
+        <span id="studentDisplay" style="font-size: 0.85rem; color: #6b7280;">StudID: 2024123456</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="bookDate">Booking Date (BookDate)</label>
+          <input type="date" id="bookDate" value="2026-11-26" required />
+        </div>
+        <div class="form-group">
+          <label for="startTime">Start Time (StartTime)</label>
+          <select id="startTime">
+            <option value="08:00">08:00 AM</option>
+            <option value="10:00" selected>10:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+            <option value="14:00">02:00 PM</option>
+            <option value="16:00">04:00 PM</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="duration">Duration (Hours)</label>
+          <select id="duration">
+            <option value="1">1 Hour</option>
+            <option value="2" selected>2 Hours</option>
+            <option value="3">3 Hours (Tests 6-hr Quota Limit!)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Rooms List (Maps to ERD Room Entity) -->
+    <div class="card">
+      <div class="card-title">2. Choose an Available Room</div>
+      <div class="room-grid" id="roomList"></div>
+    </div>
+  </div>
+
+  <script>
+    const MAX_WEEKLY_HOURS = 6;
+
+    const rooms = [
+      { roomId: 'R01', roomName: 'Discussion Room A (Level 2)', capacity: 6, roomType: 'Study Room', status: 'Available' },
+      { roomId: 'R02', roomName: 'Discussion Room B (Level 2)', capacity: 8, roomType: 'Study Room', status: 'Available' },
+      { roomId: 'R03', roomName: 'Presentation Lab 1 (Level 3)', capacity: 12, roomType: 'Presentation Lab', status: 'Available' },
+      { roomId: 'R04', roomName: 'Multimedia Pod 2 (Level 3)', capacity: 4, roomType: 'Study Pod', status: 'Under Maintenance' }
+    ];
+
+    const user = JSON.parse(sessionStorage.getItem('biblio_user')) || { userId: '2024123456' };
+    document.getElementById('studentDisplay').textContent = 'StudID: ' + user.userId;
+
+    function getBookings() {
+      return JSON.parse(localStorage.getItem('biblio_bookings')) || [];
+    }
+
+    function getUsedWeeklyHours() {
+      return getBookings()
+        .filter(b => b.status === 'Confirmed')
+        .reduce((total, b) => total + Number(b.hours), 0);
+    }
+
+    function updateQuotaUI() {
+      const used = getUsedWeeklyHours();
+      const pct = Math.min((used / MAX_WEEKLY_HOURS) * 100, 100);
+      document.getElementById('quotaText').textContent = `${used} / ${MAX_WEEKLY_HOURS} Hours Used`;
+      const bar = document.getElementById('quotaBar');
+      bar.style.width = pct + '%';
+      bar.style.background = used >= MAX_WEEKLY_HOURS ? '#ef4444' : '#4338ca';
+    }
+
+    function calculateEndTime(start, hoursToAdd) {
+      const [h, m] = start.split(':').map(Number);
+      const endH = String(h + hoursToAdd).padStart(2, '0');
+      return `${endH}:${String(m).padStart(2, '0')}`;
+    }
+
+    function showAlert(message, type) {
+      const box = document.getElementById('alertBox');
+      box.className = `alert alert-${type}`;
+      box.textContent = message;
+      box.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function bookRoom(roomId) {
+      const room = rooms.find(r => r.roomId === roomId);
+      const bookDate = document.getElementById('bookDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const duration = Number(document.getElementById('duration').value);
+      const endTime = calculateEndTime(startTime, duration);
+
+      if (!bookDate) {
+        showAlert('Please select a booking date first.', 'danger');
+        return;
+      }
+
+      const currentUsed = getUsedWeeklyHours();
+      if (currentUsed + duration > MAX_WEEKLY_HOURS) {
+        showAlert(
+          `Booking Rejected: You have already used ${currentUsed} hours this week. Adding ${duration} hour(s) exceeds the university's ${MAX_WEEKLY_HOURS}-hour weekly maximum quota.`,
+          'danger'
+        );
+        return;
+      }
+
+      const bookings = getBookings();
+      const newBooking = {
+        bookId: 'BK-' + Math.floor(1000 + Math.random() * 9000),
+        studId: user.userId,
+        roomId: room.roomId,
+        roomName: room.roomName,
+        bookDate: bookDate,
+        startTime: startTime,
+        endTime: endTime,
+        hours: duration,
+        status: 'Confirmed'
+      };
+
+      bookings.push(newBooking);
+      localStorage.setItem('biblio_bookings', JSON.stringify(bookings));
+      updateQuotaUI();
+      showAlert(
+        `Booking Confirmed (${newBooking.bookId})! ${room.roomName} reserved on ${bookDate} (${startTime} - ${endTime}).`,
+        'success'
+      );
+    }
+
+    function renderRooms() {
+      const grid = document.getElementById('roomList');
+      grid.innerHTML = rooms.map(room => {
+        const isAvailable = room.status === 'Available';
+        return `
+          <div class="room-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:0.5rem;">
+                <strong>${room.roomName}</strong>
+                <span class="status-pill ${isAvailable ? 'status-available' : 'status-maintenance'}">
+                  ${room.status}
+                </span>
+              </div>
+              <p style="font-size:0.875rem; color:#6b7280;">
+                ID: ${room.roomId} &bull; Type: ${room.roomType} &bull; Capacity: ${room.capacity} Pax
+              </p>
+            </div>
+            <button
+              class="btn ${isAvailable ? 'btn-primary' : 'btn-outline'}"
+              ${isAvailable ? '' : 'disabled style="opacity:0.5; cursor:not-allowed;"'}
+              onclick="bookRoom('${room.roomId}')">
+              ${isAvailable ? 'Reserve Room' : 'Blocked by Librarian'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    updateQuotaUI();
+    renderRooms();
+  </script>
+</body>
+</html>
