@@ -1,16 +1,602 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblio-Space | Staff Dashboard</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .top-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.15rem 1.35rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1e1b4b;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1.15rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.82rem;
+    }
+
+    .status-unavailable {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* Edit Booking Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.55);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      width: 100%;
+      max-width: 540px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-header h3 {
+      color: #1e1b4b;
+      font-size: 1.15rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span>Biblio-Space</span>
+      <span class="badge-gold">Staff Portal</span>
+    </div>
+    <div class="nav-links">
+      <a href="staff-dashboard.html" class="active">Dashboard</a>
+      <a href="staff-schedule.html">Monthly Schedule</a>
+      <a href="index.html" class="btn-logout" onclick="sessionStorage.removeItem('biblio_user')">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:0.75rem;">
+      <div>
+        <h1 style="font-size:1.5rem; color:#1e1b4b;">Librarian Reservation &amp; Room Dashboard</h1>
+        <p style="color:#6b7280; font-size:0.9rem;">Manage monthly bookings, update booking details, and control room availability.</p>
+      </div>
+      <div class="top-meta">
+        <span class="badge-gold" id="staffIdBadge">StaffID: STF-01</span>
+      </div>
+    </div>
+
+    <div id="dashAlert" class="alert"></div>
+
+    <!-- Monthly Summary Stats -->
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-label">Bookings in Selected Month</div>
+        <div class="stat-value" id="statTotalBookings">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Confirmed Bookings</div>
+        <div class="stat-value" id="statConfirmedBookings">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Available Rooms</div>
+        <div class="stat-value" id="statAvailableRooms">0</div>
+      </div>
+    </div>
+
+    <!-- Monthly Bookings Table & CRUD Controls -->
+    <div class="card">
+      <div class="card-title">
+        <span>Monthly Bookings Record (Booking Entity)</span>
+        <span class="badge-gold" id="selectedMonthLabel">Month: 2026-11</span>
+      </div>
+
+      <div class="filter-bar">
+        <div class="form-group">
+          <label for="filterMonth">Select Month (BookDate)</label>
+          <input type="month" id="filterMonth" value="2026-11" />
+        </div>
+        <div class="form-group">
+          <label for="filterRoom">Filter by RoomID</label>
+          <select id="filterRoom">
+            <option value="ALL">All Rooms</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filterStatus">Filter by Status</label>
+          <select id="filterStatus">
+            <option value="ALL">All Statuses</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="searchStud">Search StudID / BookID</label>
+          <input type="text" id="searchStud" placeholder="e.g. 20261001 or BK-1001" />
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>BookID</th>
+              <th>BookDate</th>
+              <th>StartTime</th>
+              <th>EndTime</th>
+              <th>StudID</th>
+              <th>RoomID</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Room Status Management (ERD Room Entity) -->
+    <div class="card">
+      <div class="card-title">
+        <span>Room Availability Status (Room Entity)</span>
+        <span style="font-size:0.85rem; color:#6b7280;">Toggle whether rooms are available for students</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>RoomID</th>
+              <th>RoomName</th>
+              <th>RoomType</th>
+              <th>Capacity</th>
+              <th>StaffID</th>
+              <th>Status</th>
+              <th>Update Availability</th>
+            </tr>
+          </thead>
+          <tbody id="roomsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Booking Modal -->
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Edit Booking (<span id="modalBookIdText"></span>)</h3>
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeEditModal()">Close</button>
+      </div>
+
+      <form id="editBookingForm">
+        <input type="hidden" id="editOriginalBookId" />
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editBookDate">BookDate</label>
+            <input type="date" id="editBookDate" required />
+          </div>
+          <div class="form-group">
+            <label for="editStudId">StudID</label>
+            <input type="text" id="editStudId" required />
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editStartTime">StartTime</label>
+            <input type="time" id="editStartTime" required />
+          </div>
+          <div class="form-group">
+            <label for="editEndTime">EndTime</label>
+            <input type="time" id="editEndTime" required />
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editRoomId">RoomID</label>
+            <select id="editRoomId" required></select>
+          </div>
+          <div class="form-group">
+            <label for="editStatus">Status</label>
+            <select id="editStatus" required>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_ROOMS = [
+      { roomId: 'R01', roomName: 'Discussion Room A (Level 2)', roomType: 'Study Room', capacity: 6, staffId: 'STF-01', status: 'Available' },
+      { roomId: 'R02', roomName: 'Discussion Room B (Level 2)', roomType: 'Study Room', capacity: 8, staffId: 'STF-01', status: 'Available' },
+      { roomId: 'R03', roomName: 'Presentation Lab 1 (Level 3)', roomType: 'Presentation Lab', capacity: 12, staffId: 'STF-02', status: 'Available' },
+      { roomId: 'R04', roomName: 'Multimedia Pod 2 (Level 3)', roomType: 'Study Pod', capacity: 4, staffId: 'STF-02', status: 'Unavailable' }
+    ];
+
+    const DEFAULT_BOOKINGS = [
+      {
+        bookId: 'BK-1001',
+        studId: '20261001',
+        roomId: 'R01',
+        roomName: 'Discussion Room A (Level 2)',
+        bookDate: '2026-11-22',
+        startTime: '09:00',
+        endTime: '11:00',
+        hours: 2,
+        status: 'Confirmed'
+      },
+      {
+        bookId: 'BK-1002',
+        studId: '20261004',
+        roomId: 'R03',
+        roomName: 'Presentation Lab 1 (Level 3)',
+        bookDate: '2026-11-22',
+        startTime: '14:00',
+        endTime: '16:00',
+        hours: 2,
+        status: 'Confirmed'
+      },
+      {
+        bookId: 'BK-1003',
+        studId: '20261008',
+        roomId: 'R02',
+        roomName: 'Discussion Room B (Level 2)',
+        bookDate: '2026-11-23',
+        startTime: '10:00',
+        endTime: '12:00',
+        hours: 2,
+        status: 'Confirmed'
+      },
+      {
+        bookId: 'BK-1004',
+        studId: '20261012',
+        roomId: 'R01',
+        roomName: 'Discussion Room A (Level 2)',
+        bookDate: '2026-11-25',
+        startTime: '13:00',
+        endTime: '15:00',
+        hours: 2,
+        status: 'Cancelled'
+      },
+      {
+        bookId: 'BK-1005',
+        studId: '20261015',
+        roomId: 'R03',
+        roomName: 'Presentation Lab 1 (Level 3)',
+        bookDate: '2026-11-27',
+        startTime: '08:00',
+        endTime: '10:00',
+        hours: 2,
+        status: 'Confirmed'
+      }
+    ];
+
+    const sessionUser = JSON.parse(sessionStorage.getItem('biblio_user'));
+    const activeStaffId = (sessionUser && sessionUser.role === 'staff' && sessionUser.userId) ? sessionUser.userId : 'STF-01';
+    document.getElementById('staffIdBadge').textContent = 'StaffID: ' + activeStaffId;
+
+    function getRooms() {
+      const saved = JSON.parse(localStorage.getItem('biblio_rooms'));
+      if (!saved || !Array.isArray(saved) || saved.length === 0) {
+        localStorage.setItem('biblio_rooms', JSON.stringify(DEFAULT_ROOMS));
+        return [...DEFAULT_ROOMS];
+      }
+      return saved;
+    }
+
+    function saveRooms(rooms) {
+      localStorage.setItem('biblio_rooms', JSON.stringify(rooms));
+    }
+
+    function getBookings() {
+      const saved = JSON.parse(localStorage.getItem('biblio_bookings'));
+      if (!saved || !Array.isArray(saved)) {
+        localStorage.setItem('biblio_bookings', JSON.stringify(DEFAULT_BOOKINGS));
+        return [...DEFAULT_BOOKINGS];
+      }
+      return saved;
+    }
+
+    function saveBookings(bookings) {
+      localStorage.setItem('biblio_bookings', JSON.stringify(bookings));
+    }
+
+    function showAlert(message, type) {
+      const box = document.getElementById('dashAlert');
+      box.className = `alert alert-${type}`;
+      box.textContent = message;
+      box.style.display = 'block';
+    }
+
+    function computeHours(startTime, endTime) {
+      const [sh, sm] = startTime.split(':').map(Number);
+      const [eh, em] = endTime.split(':').map(Number);
+      const diffHours = ((eh * 60 + em) - (sh * 60 + sm)) / 60;
+      return diffHours > 0 ? Math.round(diffHours * 10) / 10 : 1;
+    }
+
+    function populateRoomSelects() {
+      const rooms = getRooms();
+      const filterRoom = document.getElementById('filterRoom');
+      const editRoom = document.getElementById('editRoomId');
+
+      const currentFilterVal = filterRoom.value || 'ALL';
+      filterRoom.innerHTML = '<option value="ALL">All Rooms</option>' +
+        rooms.map(r => `<option value="${r.roomId}">${r.roomId} - ${r.roomName}</option>`).join('');
+      filterRoom.value = currentFilterVal;
+
+      editRoom.innerHTML = rooms.map(r => `<option value="${r.roomId}">${r.roomId} - ${r.roomName}</option>`).join('');
+    }
+
+    function renderBookingsTable() {
+      const monthVal = document.getElementById('filterMonth').value;
+      const roomFilter = document.getElementById('filterRoom').value;
+      const statusFilter = document.getElementById('filterStatus').value;
+      const searchVal = document.getElementById('searchStud').value.trim().toLowerCase();
+
+      document.getElementById('selectedMonthLabel').textContent = `Month: ${monthVal || 'All'}`;
+
+      const allBookings = getBookings();
+      const monthlyBookings = allBookings.filter(b => {
+        const matchesMonth = !monthVal || (b.bookDate && b.bookDate.startsWith(monthVal));
+        const matchesRoom = roomFilter === 'ALL' || b.roomId === roomFilter;
+        const matchesStatus = statusFilter === 'ALL' || b.status === statusFilter;
+        const matchesSearch = !searchVal ||
+          String(b.studId || '').toLowerCase().includes(searchVal) ||
+          String(b.bookId || '').toLowerCase().includes(searchVal);
+        return matchesMonth && matchesRoom && matchesStatus && matchesSearch;
+      });
+
+      monthlyBookings.sort((a, b) => {
+        if (a.bookDate !== b.bookDate) return a.bookDate.localeCompare(b.bookDate);
+        return (a.startTime || '').localeCompare(b.startTime || '');
+      });
+
+      document.getElementById('statTotalBookings').textContent = monthlyBookings.length;
+      document.getElementById('statConfirmedBookings').textContent =
+        monthlyBookings.filter(b => b.status === 'Confirmed').length;
+
+      const tbody = document.getElementById('bookingsTableBody');
+      if (monthlyBookings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#6b7280;">No bookings match the selected month/filters.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = monthlyBookings.map(b => {
+        const isConfirmed = b.status === 'Confirmed';
+        return `
+          <tr>
+            <td><strong>${b.bookId}</strong></td>
+            <td>${b.bookDate}</td>
+            <td>${b.startTime}</td>
+            <td>${b.endTime}</td>
+            <td>${b.studId}</td>
+            <td>${b.roomId}</td>
+            <td>
+              <span class="status-pill ${isConfirmed ? 'status-confirmed' : 'status-cancelled'}">
+                ${b.status}
+              </span>
+            </td>
+            <td>
+              <div class="action-group">
+                <button type="button" class="btn btn-outline btn-sm" onclick="openEditModal('${b.bookId}')">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteBooking('${b.bookId}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderRoomsTable() {
+      const rooms = getRooms();
+      document.getElementById('statAvailableRooms').textContent =
+        rooms.filter(r => r.status === 'Available').length;
+
+      const tbody = document.getElementById('roomsTableBody');
+      tbody.innerHTML = rooms.map(r => {
+        const isAvailable = r.status === 'Available';
+        return `
+          <tr>
+            <td><strong>${r.roomId}</strong></td>
+            <td>${r.roomName}</td>
+            <td>${r.roomType}</td>
+            <td>${r.capacity} Pax</td>
+            <td>${r.staffId || activeStaffId}</td>
+            <td>
+              <span class="status-pill ${isAvailable ? 'status-available' : 'status-unavailable'}">
+                ${r.status}
+              </span>
+            </td>
+            <td>
+              <select aria-label="Status for ${r.roomId}" onchange="updateRoomStatus('${r.roomId}', this.value)">
+                <option value="Available" ${isAvailable ? 'selected' : ''}>Available</option>
+                <option value="Unavailable" ${!isAvailable ? 'selected' : ''}>Unavailable</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateRoomStatus(roomId, newStatus) {
+      const rooms = getRooms().map(r => {
+        if (r.roomId === roomId) {
+          return { ...r, status: newStatus, staffId: activeStaffId };
+        }
+        return r;
+      });
+      saveRooms(rooms);
+      renderRoomsTable();
+      showAlert(`Room ${roomId} status updated to "${newStatus}".`, 'success');
+    }
+
+    function openEditModal(bookId) {
+      const booking = getBookings().find(b => b.bookId === bookId);
+      if (!booking) return;
+
+      populateRoomSelects();
+      document.getElementById('modalBookIdText').textContent = booking.bookId;
+      document.getElementById('editOriginalBookId').value = booking.bookId;
+      document.getElementById('editBookDate').value = booking.bookDate;
+      document.getElementById('editStudId').value = booking.studId;
+      document.getElementById('editStartTime').value = booking.startTime;
+      document.getElementById('editEndTime').value = booking.endTime;
+      document.getElementById('editRoomId').value = booking.roomId;
+      document.getElementById('editStatus').value = booking.status;
+
+      document.getElementById('editModal').classList.add('open');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('open');
+    }
+
+    document.getElementById('editBookingForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const bookId = document.getElementById('editOriginalBookId').value;
+      const bookDate = document.getElementById('editBookDate').value;
+      const studId = document.getElementById('editStudId').value.trim();
+      const startTime = document.getElementById('editStartTime').value;
+      const endTime = document.getElementById('editEndTime').value;
+      const roomId = document.getElementById('editRoomId').value;
+      const status = document.getElementById('editStatus').value;
+
+      if (endTime <= startTime) {
+        showAlert('EndTime must be later than StartTime.', 'danger');
+        closeEditModal();
+        return;
+      }
+
+      const rooms = getRooms();
+      const matchedRoom = rooms.find(r => r.roomId === roomId);
+
+      const updated = getBookings().map(b => {
+        if (b.bookId === bookId) {
+          return {
+            ...b,
+            bookDate,
+            studId,
+            startTime,
+            endTime,
+            roomId,
+            roomName: matchedRoom ? matchedRoom.roomName : b.roomName,
+            hours: computeHours(startTime, endTime),
+            status
+          };
+        }
+        return b;
+      });
+
+      saveBookings(updated);
+      closeEditModal();
+      renderBookingsTable();
+      showAlert(`Booking ${bookId} has been updated.`, 'success');
+    });
+
+    function deleteBooking(bookId) {
+      if (!confirm(`Delete booking ${bookId}? This action cannot be undone.`)) return;
+      const remaining = getBookings().filter(b => b.bookId !== bookId);
+      saveBookings(remaining);
+      renderBookingsTable();
+      showAlert(`Booking ${bookId} has been deleted.`, 'success');
+    }
+
+    ['filterMonth', 'filterRoom', 'filterStatus', 'searchStud'].forEach(id => {
+      document.getElementById(id).addEventListener('input', renderBookingsTable);
+      document.getElementById(id).addEventListener('change', renderBookingsTable);
+    });
+
+    populateRoomSelects();
+    renderBookingsTable();
+    renderRoomsTable();
+  </script>
+</body>
 </html>
