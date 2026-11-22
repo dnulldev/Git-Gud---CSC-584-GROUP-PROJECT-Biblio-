@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblio-Space | Monthly Booking Schedule</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .schedule-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .month-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .legend-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-confirmed { background: #4338ca; }
+    .dot-cancelled { background: #9ca3af; }
+
+    /* Monthly Calendar Grid */
+    .calendar-wrapper {
+      overflow-x: auto;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(135px, 1fr));
+      border-top: 1px solid #e5e7eb;
+      border-left: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .cal-weekday {
+      background: #f9fafb;
+      color: #4b5563;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.7rem 0.5rem;
+      text-align: center;
+      border-right: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .cal-cell {
+      min-height: 122px;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.55rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .cal-cell:hover {
+      background: #f8fafc;
+    }
+
+    .cal-cell.empty {
+      background: #f9fafb;
+      cursor: default;
+    }
+
+    .cal-cell.selected-day {
+      background: #eef2ff;
+      box-shadow: inset 0 0 0 2px #4338ca;
+    }
+
+    .cal-day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.15rem;
+    }
+
+    .cal-day-num {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .cal-count-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+    }
+
+    .booking-chip {
+      font-size: 0.74rem;
+      line-height: 1.3;
+      padding: 0.3rem 0.45rem;
+      border-radius: 6px;
+      border-left: 3px solid #4338ca;
+      background: #eef2ff;
+      color: #1e1b4b;
+    }
+
+    .booking-chip.cancelled {
+      border-left-color: #9ca3af;
+      background: #f3f4f6;
+      color: #6b7280;
+      text-decoration: line-through;
+    }
+
+    .chip-time {
+      font-weight: 700;
+      display: block;
+    }
+
+    .chip-meta {
+      font-size: 0.7rem;
+      opacity: 0.9;
+    }
+
+    .readonly-notice {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #4b5563;
+      font-size: 0.85rem;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span>Biblio-Space</span>
+      <span class="badge-gold">Staff Portal</span>
+    </div>
+    <div class="nav-links">
+      <a href="staff-dashboard.html">Dashboard</a>
+      <a href="staff-schedule.html" class="active">Monthly Schedule</a>
+      <a href="index.html" class="btn-logout" onclick="sessionStorage.removeItem('biblio_user')">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:0.75rem;">
+      <div>
+        <h1 style="font-size:1.5rem; color:#1e1b4b;">Monthly Room Booking Schedule</h1>
+        <p style="color:#6b7280; font-size:0.9rem;">Visual overview of booked days and time slots across all library rooms.</p>
+      </div>
+      <span class="badge-gold" id="staffBadge">StaffID: STF-01 &bull; View Only</span>
+    </div>
+
+    <div class="readonly-notice">
+      <span><strong>Read-Only Schedule View:</strong> Click any day on the calendar to inspect its booked time slots below.</span>
+      <span id="monthlyTotalBadge" class="badge-gold">0 Bookings in Month</span>
+    </div>
+
+    <!-- Monthly Calendar Visualization -->
+    <div class="card">
+      <div class="schedule-controls">
+        <div class="month-nav">
+          <button type="button" class="btn btn-outline" style="padding:0.45rem 0.85rem;" onclick="changeMonth(-1)">&larr; Prev</button>
+          <input type="month" id="scheduleMonth" value="2026-11" />
+          <button type="button" class="btn btn-outline" style="padding:0.45rem 0.85rem;" onclick="changeMonth(1)">Next &rarr;</button>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+          <select id="roomFilter" aria-label="Filter schedule by room">
+            <option value="ALL">All Rooms</option>
+            <option value="R01">R01 - Discussion Room A</option>
+            <option value="R02">R02 - Discussion Room B</option>
+            <option value="R03">R03 - Presentation Lab 1</option>
+            <option value="R04">R04 - Multimedia Pod 2</option>
+          </select>
+
+          <div class="legend-group">
+            <span class="legend-item"><span class="legend-dot dot-confirmed"></span> Confirmed</span>
+            <span class="legend-item"><span class="legend-dot dot-cancelled"></span> Cancelled</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="calendar-wrapper">
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+    </div>
+
+    <!-- Selected Day Time-Slot Breakdown (Read-Only) -->
+    <div class="card">
+      <div class="card-title">
+        <span id="dayDetailTitle">Day Schedule Breakdown (2026-11-22)</span>
+        <span class="badge-gold">Read-Only</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>BookDate</th>
+              <th>Time Slot (Start - End)</th>
+              <th>RoomID</th>
+              <th>Room Name</th>
+              <th>StudID</th>
+              <th>BookID</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="dayDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_BOOKINGS = [
+      {
+        bookId: 'BK-1001',
+        studId: '20261001',
+        roomId: 'R01',
+        roomName: 'Discussion Room A (Level 2)',
+        bookDate: '2026-11-22',
+        startTime: '09:00',
+        endTime: '11:00',
+        hours: 2,
+        status: 'Confirmed'
+      },
+      {
+        bookId: 'BK-1002',
+        studId: '20261004',
+        roomId: 'R03',
+        roomName: 'Presentation Lab 1 (Level 3)',
+        bookDate: '2026-11-22',
+        startTime: '14:00',
+        endTime: '16:00',
+        hours: 2,
+        status: 'Confirmed'
+      },
+      {
+        bookId: 'BK-1003',
+        studId: '20261008',
+        roomId: 'R02',
+        roomName: 'Discussion Room B (Level 2)',
+        bookDate: '2026-11-23',
+        startTime: '10:00',
+        endTime: '12:00',
+        hours: 2,
+        status: 'Confirmed'
+      },
+      {
+        bookId: 'BK-1004',
+        studId: '20261012',
+        roomId: 'R01',
+        roomName: 'Discussion Room A (Level 2)',
+        bookDate: '2026-11-25',
+        startTime: '13:00',
+        endTime: '15:00',
+        hours: 2,
+        status: 'Cancelled'
+      },
+      {
+        bookId: 'BK-1005',
+        studId: '20261015',
+        roomId: 'R03',
+        roomName: 'Presentation Lab 1 (Level 3)',
+        bookDate: '2026-11-27',
+        startTime: '08:00',
+        endTime: '10:00',
+        hours: 2,
+        status: 'Confirmed'
+      }
+    ];
+
+    const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    let selectedDate = '2026-11-22';
+
+    const sessionUser = JSON.parse(sessionStorage.getItem('biblio_user'));
+    const staffId = (sessionUser && sessionUser.role === 'staff' && sessionUser.userId) ? sessionUser.userId : 'STF-01';
+    document.getElementById('staffBadge').textContent = `StaffID: ${staffId} • View Only`;
+
+    function getBookings() {
+      const saved = JSON.parse(localStorage.getItem('biblio_bookings'));
+      if (!saved || !Array.isArray(saved) || saved.length === 0) {
+        localStorage.setItem('biblio_bookings', JSON.stringify(DEFAULT_BOOKINGS));
+        return [...DEFAULT_BOOKINGS];
+      }
+      return saved;
+    }
+
+    function changeMonth(delta) {
+      const input = document.getElementById('scheduleMonth');
+      const [yearStr, monthStr] = input.value.split('-');
+      const d = new Date(Number(yearStr), Number(monthStr) - 1 + delta, 1);
+      const nextVal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      input.value = nextVal;
+      selectedDate = `${nextVal}-01`;
+      renderSchedule();
+    }
+
+    function selectDay(dateStr) {
+      selectedDate = dateStr;
+      renderSchedule();
+    }
+
+    function renderSchedule() {
+      const monthVal = document.getElementById('scheduleMonth').value || '2026-11';
+      const roomFilter = document.getElementById('roomFilter').value;
+      const [year, month] = monthVal.split('-').map(Number);
+
+      if (!selectedDate.startsWith(monthVal)) {
+        selectedDate = `${monthVal}-01`;
+      }
+
+      const allBookings = getBookings().filter(b => {
+        const matchMonth = b.bookDate && b.bookDate.startsWith(monthVal);
+        const matchRoom = roomFilter === 'ALL' || b.roomId === roomFilter;
+        return matchMonth && matchRoom;
+      });
+
+      document.getElementById('monthlyTotalBadge').textContent =
+        `${allBookings.length} Booking(s) in ${monthVal}`;
+
+      const firstDayIndex = new Date(year, month - 1, 1).getDay();
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      let html = WEEKDAYS.map(day => `<div class="cal-weekday">${day}</div>`).join('');
+
+      for (let i = 0; i < firstDayIndex; i++) {
+        html += `<div class="cal-cell empty"></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${monthVal}-${String(day).padStart(2, '0')}`;
+        const dayBookings = allBookings
+          .filter(b => b.bookDate === dateStr)
+          .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+
+        const isSelected = dateStr === selectedDate;
+        const chipsHtml = dayBookings.map(b => `
+          <div class="booking-chip ${b.status === 'Cancelled' ? 'cancelled' : ''}">
+            <span class="chip-time">${b.startTime} - ${b.endTime}</span>
+            <span class="chip-meta">${b.roomId} &bull; ${b.studId}</span>
+          </div>
+        `).join('');
+
+        html += `
+          <div class="cal-cell ${isSelected ? 'selected-day' : ''}" onclick="selectDay('${dateStr}')">
+            <div class="cal-day-header">
+              <span class="cal-day-num">${day}</span>
+              ${dayBookings.length > 0 ? `<span class="cal-count-pill">${dayBookings.length}</span>` : ''}
+            </div>
+            ${chipsHtml}
+          </div>
+        `;
+      }
+
+      document.getElementById('calendarGrid').innerHTML = html;
+      renderDayDetail(selectedDate, allBookings);
+    }
+
+    function renderDayDetail(dateStr, monthBookings) {
+      document.getElementById('dayDetailTitle').textContent = `Day Schedule Breakdown (${dateStr})`;
+      const dayItems = monthBookings
+        .filter(b => b.bookDate === dateStr)
+        .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+
+      const tbody = document.getElementById('dayDetailBody');
+      if (dayItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#6b7280;">No room reservations scheduled on ${dateStr}.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = dayItems.map(b => {
+        const isConfirmed = b.status === 'Confirmed';
+        return `
+          <tr>
+            <td><strong>${b.bookDate}</strong></td>
+            <td>${b.startTime} - ${b.endTime}</td>
+            <td><strong>${b.roomId}</strong></td>
+            <td>${b.roomName || '-'}</td>
+            <td>${b.studId}</td>
+            <td>${b.bookId}</td>
+            <td>
+              <span class="status-pill ${isConfirmed ? 'status-confirmed' : 'status-cancelled'}">
+                ${b.status}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('scheduleMonth').addEventListener('change', renderSchedule);
+    document.getElementById('roomFilter').addEventListener('change', renderSchedule);
+
+    renderSchedule();
+  </script>
+</body>
+</html>

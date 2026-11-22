@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblio-Space | Library Room &amp; Lab Reservation</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* Landing Page Hero & Layout */
+    .landing-navbar {
+      background: #1e1b4b;
+      color: #ffffff;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .landing-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-header-cta {
+      background: #ffffff;
+      color: #1e1b4b;
+      padding: 0.6rem 1.35rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-header-cta:hover {
+      background: #eef2ff;
+      transform: translateY(-1px);
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
+      color: #ffffff;
+      padding: 4.5rem 2rem;
+    }
+
+    .hero-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+
+    .hero-text {
+      flex: 1.2;
+    }
+
+    .hero-pill {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.14);
+      color: #e0e7ff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-text h1 {
+      font-size: 2.5rem;
+      line-height: 1.2;
+      font-weight: 800;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-text p {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.82);
+      margin-bottom: 2rem;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-hero-primary {
+      background: #ffffff;
+      color: #1e1b4b;
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: 0.2s;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-hero-primary:hover {
+      background: #eef2ff;
+    }
+
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* White Line-Art Architectural Floor Plan */
+    .hero-art {
+      flex: 0.95;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .blueprint-svg {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      filter: drop-shadow(0 12px 24px rgba(255, 255, 255, 0.14));
+      animation: floatBlueprint 6s ease-in-out infinite;
+    }
+
+    .room-highlight-1 {
+      animation: pulseRoom 6s ease-in-out infinite;
+    }
+
+    .room-highlight-2 {
+      animation: pulseRoom 6s ease-in-out infinite 2s;
+    }
+
+    .room-highlight-3 {
+      animation: pulseRoom 6s ease-in-out infinite 4s;
+    }
+
+    @keyframes floatBlueprint {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulseRoom {
+      0%, 100% { fill: rgba(255, 255, 255, 0.04); stroke: rgba(255, 255, 255, 0.55); }
+      30% { fill: rgba(255, 255, 255, 0.18); stroke: rgba(255, 255, 255, 0.95); }
+      60% { fill: rgba(255, 255, 255, 0.04); stroke: rgba(255, 255, 255, 0.55); }
+    }
+
+    /* Info & Features Section */
+    .info-section {
+      max-width: 1120px;
+      margin: 3.5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-heading h2 {
+      font-size: 1.75rem;
+      color: #1e1b4b;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-heading p {
+      color: #6b7280;
+      font-size: 0.98rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.75rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .feature-step {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4338ca;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      margin-bottom: 0.85rem;
+    }
+
+    .feature-card h3 {
+      color: #111827;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: #6b7280;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .landing-footer {
+      text-align: center;
+      padding: 1.75rem;
+      color: #6b7280;
+      font-size: 0.85rem;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 860px) {
+      .hero-inner { flex-direction: column; text-align: center; }
+      .hero-actions { justify-content: center; }
+      .hero-text h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header with Start Booking CTA -->
+  <header class="landing-navbar">
+    <div class="landing-brand">
+      <span>Biblio-Space</span>
+    </div>
+    <div>
+      <a href="login-page.html" class="btn-header-cta">Start Booking &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Hero Introduction Section -->
+  <section class="hero-section">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-pill">Library Space Management</span>
+        <h1>Reserve Study Rooms &amp; Presentation Labs Effortlessly.</h1>
+        <p>
+          Biblio-Space is a centralized library room reservation system designed for students and library administrators. Check real-time room availability, manage weekly study quotas, and book collaborative spaces in seconds.
+        </p>
+        <div class="hero-actions">
+          <a href="login-page.html" class="btn-hero-primary">Start Booking</a>
+          <a href="register-page.html" class="btn-hero-secondary">Create Student Account</a>
+        </div>
+      </div>
+
+      <!-- White Line-Art Architectural Library Floor Plan -->
+      <div class="hero-art">
+        <svg class="blueprint-svg" viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Blueprint Outer Grid & Corner Crosshairs -->
+          <g stroke="rgba(255,255,255,0.16)" stroke-width="1" stroke-dasharray="4 4">
+            <line x1="20" y1="40" x2="400" y2="40" />
+            <line x1="20" y1="280" x2="400" y2="280" />
+            <line x1="35" y1="25" x2="35" y2="295" />
+            <line x1="385" y1="25" x2="385" y2="295" />
+          </g>
+
+          <!-- Outer Library Floor Perimeter -->
+          <rect x="35" y="40" width="350" height="240" rx="8"
+                stroke="rgba(255,255,255,0.75)" stroke-width="2.2" fill="rgba(255,255,255,0.03)" />
+
+          <!-- Room 1: Discussion Room A (Top Left) -->
+          <g class="room-highlight-1">
+            <rect x="48" y="54" width="145" height="96" rx="4" stroke-width="1.8" />
+            <!-- Conference Table & Chairs -->
+            <rect x="85" y="88" width="70" height="28" rx="4" stroke="rgba(255,255,255,0.65)" stroke-width="1.4" />
+            <line x1="95" y1="82" x2="112" y2="82" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+            <line x1="128" y1="82" x2="145" y2="82" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+            <line x1="95" y1="122" x2="112" y2="122" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+            <line x1="128" y1="122" x2="145" y2="122" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" />
+          </g>
+          <text x="58" y="71" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="600" letter-spacing="0.5">ROOM A &bull; 6 PAX</text>
+
+          <!-- Room 2: Presentation Lab 1 (Top Right) -->
+          <g class="room-highlight-2">
+            <rect x="207" y="54" width="165" height="96" rx="4" stroke-width="1.8" />
+            <!-- Projector Screen & Workstation Desks -->
+            <line x1="255" y1="62" x2="325" y2="62" stroke="rgba(255,255,255,0.85)" stroke-width="2.4" stroke-linecap="round" />
+            <rect x="232" y="92" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+            <rect x="298" y="92" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+            <rect x="232" y="118" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+            <rect x="298" y="118" width="48" height="16" rx="2" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" />
+          </g>
+          <text x="217" y="71" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="600" letter-spacing="0.5">LAB 01</text>
+
+          <!-- Central Corridor Divider & Door Arcs -->
+          <g stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linecap="round">
+            <path d="M165 150 A16 16 0 0 0 181 166" />
+            <path d="M235 150 A16 16 0 0 1 219 166" />
+            <line x1="80" y1="168" x2="340" y2="168" stroke-dasharray="6 6" />
+          </g>
+
+          <!-- Room 3: Quiet Study Pods (Bottom Left) -->
+          <g class="room-highlight-3">
+            <rect x="48" y="186" width="185" height="80" rx="4" stroke-width="1.8" />
+            <!-- Individual Study Cubicles -->
+            <rect x="64" y="212" width="38" height="36" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" />
+            <rect x="121" y="212" width="38" height="36" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" />
+            <rect x="178" y="212" width="38" height="36" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" />
+          </g>
+          <text x="58" y="203" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="600" letter-spacing="0.5">STUDY PODS B1 &ndash; B3</text>
+
+          <!-- Bottom Right: Librarian Info Desk -->
+          <g stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round">
+            <rect x="247" y="186" width="125" height="80" rx="4" fill="rgba(255,255,255,0.02)" />
+            <path d="M275 215 H345 V235 H275 Z" />
+            <line x1="275" y1="248" x2="345" y2="248" />
+          </g>
+          <text x="257" y="203" fill="rgba(255,255,255,0.65)" font-size="10" font-weight="600" letter-spacing="0.5">ADMIN DESK</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- System Overview & How It Works -->
+  <section class="info-section">
+    <div class="section-heading">
+      <h2>How Biblio-Space Works</h2>
+      <p>Simple, fair, and organized room scheduling for everyone in the library.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-step">01 &bull; Register &amp; Sign In</span>
+        <h3>Student &amp; Librarian Access</h3>
+        <p>
+          New students can register with their Student ID and course details, while library administrators sign in directly to oversee room availability.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-step">02 &bull; Fair Usage Quota</span>
+        <h3>6-Hour Weekly Limit</h3>
+        <p>
+          Every student is allocated up to 6 booking hours per week across Discussion Rooms, Presentation Labs, and Study Pods to ensure fair access.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-step">03 &bull; Instant Management</span>
+        <h3>Book or Cancel Anytime</h3>
+        <p>
+          Select your preferred date, start time, and duration. Need to change plans? Cancel an upcoming booking anytime to immediately refund your quota hours.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    &copy; 2026 Biblio-Space &mdash; Library Room &amp; Lab Reservation System
+  </footer>
+
+</body>
+</html>
